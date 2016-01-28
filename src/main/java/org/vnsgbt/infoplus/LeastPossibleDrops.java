@@ -22,7 +22,7 @@ public class LeastPossibleDrops {
     }
 
     private int totalDropsWithRemainingFloors (TestResult test) {
-        return 50 - test.droppingFloor + test.numberOfDropped + 1;
+        return 50 - test.getDroppingFloor() + test.getNumberOfDropped() + 1;
     }
 
     private void dropLog (String msg, TestResult dropState) {
@@ -37,14 +37,14 @@ public class LeastPossibleDrops {
 
             /** We have found optimal drops **/
 
-            return start.numberOfDropped + numberOfDrops;
+            return start.getNumberOfDropped() + numberOfDrops;
         }
         else {
 
             /** Move on to next section, the new factor is one less
              *  than previous since we lost one drop for it  **/
 
-            int newFactor = start.droppingFloor - start.lowerDroppingFloor;
+            int newFactor = start.getDroppingFloor() - start.getLowerDroppingFloor();
 
             if (totalDropsWithRemainingFloors(start) <= 12) {
 
@@ -53,14 +53,14 @@ public class LeastPossibleDrops {
 
                 dropLog("Found breakingPoint from remaining floors: ",start);
 
-                return start.numberOfDropped + numberOfDrops
-                        + (breakingPoint - start.droppingFloor + lookNoFurther(start));
+                return start.getNumberOfDropped() + numberOfDrops
+                        + (breakingPoint - start.getDroppingFloor() + lookNoFurther(start));
             }
 
-            int nextFloorToDrop = start.droppingFloor + newFactor;
-            int nextLowerFloor = start.droppingFloor + 1;
+            int nextFloorToDrop = start.getDroppingFloor() + newFactor;
+            int nextLowerFloor = start.getDroppingFloor() + 1;
 
-            TestResult nextSection = new TestResult(nextFloorToDrop,nextLowerFloor,numberOfDrops + start.numberOfDropped);
+            TestResult nextSection = new TestResult(nextFloorToDrop,nextLowerFloor,numberOfDrops + start.getNumberOfDropped());
 
             return getLeastPossibleDrops(nextSection);
         }
@@ -71,7 +71,7 @@ public class LeastPossibleDrops {
         /** If breakingPoint is at droppingFloor or top level 50
          *  There's no need to test drop anymore **/
 
-        return breakingPoint == test.droppingFloor || breakingPoint == 50 ? 0 : 1;
+        return breakingPoint == test.getDroppingFloor() || breakingPoint == 50 ? 0 : 1;
     }
 
     private int tryFromNextSection(TestResult start) {
@@ -79,12 +79,12 @@ public class LeastPossibleDrops {
         /** It takes at least one drop to find out **/
         int numberOfDrops = 1;
 
-        if (start.droppingFloor >= breakingPoint) {
+        if (start.getDroppingFloor() >= breakingPoint) {
 
             /** The difference between breakingPoint and beginning of this section
              *  plus 1 is the number of drops to see it breaks **/
 
-            numberOfDrops += breakingPoint - start.lowerDroppingFloor + lookNoFurther(start);
+            numberOfDrops += breakingPoint - start.getLowerDroppingFloor() + lookNoFurther(start);
 
             dropLog("Found breakingPoint from lowerFloor: ",start);
         }
@@ -93,41 +93,47 @@ public class LeastPossibleDrops {
     }
 
     class TestResult {
-        public int droppingFloor;
-        public int lowerDroppingFloor;
-        public int numberOfDropped;
+        private int droppingFloor;
+        private int lowerDroppingFloor;
+        private int numberOfDropped;
 
         public TestResult(int droppingFloor, int lowerDroppingFloor,int numberOfDropped){
-            this.droppingFloor = droppingFloor;
-            this.lowerDroppingFloor = lowerDroppingFloor;
-            this.numberOfDropped = numberOfDropped;
+            this.setDroppingFloor(droppingFloor);
+            this.setLowerDroppingFloor(lowerDroppingFloor);
+            this.setNumberOfDropped(numberOfDropped);
         }
 
         public String toString () {
-            return    "\n droppingFloor:      " + Integer.toString(droppingFloor)
-                    + "\n lowerDroppingFloor: " + Integer.toString(lowerDroppingFloor)
-                    + "\n numberOfDropped:    " + Integer.toString(numberOfDropped)
+            return    "\n droppingFloor:      " + Integer.toString(getDroppingFloor())
+                    + "\n lowerDroppingFloor: " + Integer.toString(getLowerDroppingFloor())
+                    + "\n numberOfDropped:    " + Integer.toString(getNumberOfDropped())
                     + "\n";
         }
-    }
 
-    public static void main (String[] args) {
-
-        LeastPossibleDrops optimalDrops;
-
-        if (args.length > 0 && Integer.getInteger( args[0]) != null) {
-            optimalDrops = new LeastPossibleDrops(Integer.getInteger(args[0]));
-        }
-        else {
-            for (int i = 1; i <= 50; i++) {
-                optimalDrops = new LeastPossibleDrops(i);
-                int result = optimalDrops.getLeastPossibleDrops(optimalDrops.startTest);
-                System.out.println("Optimal drops: " + result);
-            }
-            return;
+        public int getDroppingFloor() {
+            return droppingFloor;
         }
 
-        int result = optimalDrops.getLeastPossibleDrops(optimalDrops.startTest);
-        System.out.println("Optimal drops: " + result);
+        public void setDroppingFloor(int droppingFloor) {
+            this.droppingFloor = droppingFloor;
+        }
+
+        public int getLowerDroppingFloor() {
+            return lowerDroppingFloor;
+        }
+
+        public void setLowerDroppingFloor(int lowerDroppingFloor) {
+            this.lowerDroppingFloor = lowerDroppingFloor;
+        }
+
+        public int getNumberOfDropped() {
+            return numberOfDropped;
+        }
+
+        public void setNumberOfDropped(int numberOfDropped) {
+            this.numberOfDropped = numberOfDropped;
+        }
     }
+
+
 }
